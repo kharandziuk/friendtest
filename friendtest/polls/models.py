@@ -8,5 +8,8 @@ class Poll(models.Model):
     def get_share_url(self):
         return reverse('share', args=(self.pk,))
 
+    def get_compare_url(self):
+        return reverse('compare', args=(self.pk,))
+
     def get_participate_url(self):
         return reverse('participate', args=(self.pk,))

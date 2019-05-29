@@ -21,5 +21,6 @@ urlpatterns = [
     path('', views.PollCreate.as_view(), name='index'),
     path('polls/<pk>/share', views.PollShare.as_view(), name='share'),
     path('polls/<pk>/participate', views.PollParticipate.as_view(), name='participate'),
+    path('polls/<pk>/compare', views.PollCompare.as_view(), name='compare'),
     path('admin/', admin.site.urls),
 ]

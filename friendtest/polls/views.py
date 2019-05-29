@@ -23,12 +23,15 @@ class PollParticipate(CreateView):
 
     def get_initial(self):
         # Get the initial dictionary from the superclass method
-        initial = super(YourView, self).get_initial()
+        initial = super(PollParticipate, self).get_initial()
         # Copy the dictionary so we don't accidentally change a mutable dict
         initial = initial.copy()
-        print(self.kwargs['pk'])
-        # etc...
+        print('pk', self.kwargs['pk'])
         return initial
 
     def get_success_url(self):
-        return self.object.get_merge_url()
+        return self.object.get_compare_url()
+
+class PollCompare(DetailView):
+    model = models.Poll
+    template_name = 'poll/compare.html'

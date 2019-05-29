@@ -6,7 +6,7 @@ from . import models
 class PollCreate(CreateView):
     model = models.Poll
     fields = ['name']
-    template_name = 'index.html'
+    template_name = 'poll/create.html'
 
     def get_success_url(self):
         return self.object.get_share_url()
@@ -18,7 +18,7 @@ class PollShare(DetailView):
 
 class PollParticipate(CreateView):
     model = models.Poll
-    template_name = 'index.html'
+    template_name = 'poll/create.html'
     fields = ['name', 'reference_poll']
 
     def get_initial(self):
@@ -26,7 +26,7 @@ class PollParticipate(CreateView):
         initial = super(PollParticipate, self).get_initial()
         # Copy the dictionary so we don't accidentally change a mutable dict
         initial = initial.copy()
-        print('pk', self.kwargs['pk'])
+        initial['reference_poll'] = self.kwargs['reference_poll_pk']
         return initial
 
     def get_success_url(self):
@@ -35,3 +35,8 @@ class PollParticipate(CreateView):
 class PollCompare(DetailView):
     model = models.Poll
     template_name = 'poll/compare.html'
+
+    def get_context_data(self, **kwargs):
+       context = super(PollCompare, self).get_context_data(**kwargs)
+       context['reference_name'] = self.object.reference_poll.name
+       return context

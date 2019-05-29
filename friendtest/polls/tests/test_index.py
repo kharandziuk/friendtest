@@ -17,13 +17,15 @@ def test_can_create_an_empty_poll_and_see_share_url(django_app):
 def test_can_get_poll_share_url(django_app):
     assert models.Poll.objects.count() == 0
     poll = factories.PollFactory(name='Johannes')
-    resp = django_app.get(poll.get_participate_url())
+    response = django_app.get(poll.get_participate_url())
+    assert response.status_code == 200
+    assert poll.get_participate_url() == '/polls/1/participate'
 
-    form = resp.form
+    form = response.form
     form['name'] = 'Vova'
     response = form.submit()
     assert response.status_code == 302
     assert response.url == '/polls/2/compare'
     response = response.follow()
     assert models.Poll.objects.count() == 2
-    assert response.text =='Answers are 100% equal\n'
+    assert response.text == 'Vova and Johannes answers` are 100% equal\n'

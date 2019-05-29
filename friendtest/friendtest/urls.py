@@ -19,5 +19,7 @@ from polls import views
 
 urlpatterns = [
     path('', views.PollCreate.as_view(), name='index'),
+    path('polls/<pk>/share', views.PollShare.as_view(), name='share'),
+    path('polls/<pk>/participate', views.PollParticipate.as_view(), name='participate'),
     path('admin/', admin.site.urls),
 ]

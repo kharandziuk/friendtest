@@ -1,0 +1,15 @@
+<form method="post">{% csrf_token %}
+  What is your name? {{ form.name }}
+  {{ form.non_field_errors }}
+  <div class="fieldWrapper">
+    {{ form.name.errors }}
+    <label for="{{ form.name.id_for_label }}">What is your name?</label>
+    {{ form.name}}
+  </div>
+  <div class="fieldWrapper">
+        {{ form.answer.errors }}
+        <label for="{{ form.answer.id_for_label }}">Do you like green color?</label>
+        {{ form.answer}}
+  </div>
+  <input type="submit" value="Save">
+</form>

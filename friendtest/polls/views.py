@@ -5,7 +5,7 @@ from . import models
 
 class PollCreate(CreateView):
     model = models.Poll
-    fields = ['name']
+    fields = ['name', 'answer']
     template_name = 'poll/create.html'
 
     def get_success_url(self):
@@ -19,7 +19,7 @@ class PollShare(DetailView):
 class PollParticipate(CreateView):
     model = models.Poll
     template_name = 'poll/create.html'
-    fields = ['name', 'reference_poll']
+    fields = ['name', 'answer', 'reference_poll']
 
     def get_initial(self):
         # Get the initial dictionary from the superclass method
@@ -39,4 +39,5 @@ class PollCompare(DetailView):
     def get_context_data(self, **kwargs):
        context = super(PollCompare, self).get_context_data(**kwargs)
        context['reference_name'] = self.object.reference_poll.name
+       context['score'] = self.object.get_comparison_score()
        return context

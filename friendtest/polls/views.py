@@ -1,5 +1,9 @@
 from django.shortcuts import render
+from django.views.generic.edit import CreateView
+from . import models
 
-def index(request):
-    context = {}
-    return render(request, 'index.html', context)
+class PollCreate(CreateView):
+    model = models.Poll
+    fields = ['name']
+    template_name = 'index.html'
+

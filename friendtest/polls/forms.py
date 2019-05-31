@@ -5,16 +5,16 @@ from . import models
 class PollForm(ModelForm):
     class Meta:
         model = models.Poll
-        fields = ['name']
+        fields = '__all__'
 
 
 class AnswerInlineForm(ModelForm):
     class Meta:
         model = models.Answer
-        exclude = []
+        fields = '__all__'
 
 
-PollInnlineForm = inlineformset_factory(models.Poll,
+AnswerInlineFormset = inlineformset_factory(models.Poll,
     models.Answer,
     form=AnswerInlineForm,
     extra=1,

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import DetailView
 from . import models, forms
@@ -12,13 +12,15 @@ class PollCreate(CreateView):
         ctx = self.get_context_data()
         inlines = ctx['inlines']
         if inlines.is_valid() and form.is_valid():
-            self.object = form.save() # saves Father and Children
+            self.object = form.save()
+            inlines.instance = self.object
+            inlines.save()
             return redirect(self.get_success_url())
         else:
-            return self.render_to_response(self.get_context_data(form=form))
+            return super.form_invalid(form)
 
-    def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
+    #def form_invalid(self, form):
+    #    return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
         return self.object.get_share_url()
@@ -28,10 +30,10 @@ class PollCreate(CreateView):
         ctx = super(PollCreate, self).get_context_data(**kwargs)
         if self.request.POST:
             ctx['form'] = forms.PollForm(self.request.POST)
-            ctx['inlines'] = forms.AnswerInlineForm(self.request.POST, prefix='questions')
+            ctx['inlines'] = forms.AnswerInlineFormset(self.request.POST)
         else:
             ctx['form'] = forms.PollForm()
-            ctx['inlines'] = forms.AnswerInlineForm()
+            ctx['inlines'] = forms.AnswerInlineFormset()
         return ctx
 
 

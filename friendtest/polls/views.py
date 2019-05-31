@@ -19,9 +19,6 @@ class PollCreate(CreateView):
         else:
             return super.form_invalid(form)
 
-    #def form_invalid(self, form):
-    #    return self.render_to_response(self.get_context_data(form=form))
-
     def get_success_url(self):
         return self.object.get_share_url()
 
@@ -37,27 +34,22 @@ class PollCreate(CreateView):
         return ctx
 
 
-class PollShare(DetailView):
-    model = models.Poll
-    template_name = 'poll/share.html'
-
-
-class PollParticipate(CreateView):
-    model = models.Poll
-    template_name = 'poll/create.html'
-    fields = ['name', 'answer', 'reference_poll']
-
-    def get_initial(self):
-        # Get the initial dictionary from the superclass method
-        initial = super(PollParticipate, self).get_initial()
-        # Copy the dictionary so we don't accidentally change a mutable dict
-        initial = initial.copy()
-        initial['reference_poll'] = self.kwargs['reference_poll_pk']
-        return initial
+class PollParticipate(PollCreate):
 
     def get_success_url(self):
         return self.object.get_compare_url()
 
+    def form_valid(self, form):
+        redirection = super().form_valid(form)
+        if self.object.pk:
+            self.object.reference_poll_id = self.kwargs['reference_poll_pk']
+            self.object.save()
+        return redirection
+
+
+class PollShare(DetailView):
+    model = models.Poll
+    template_name = 'poll/share.html'
 
 class PollCompare(DetailView):
     model = models.Poll

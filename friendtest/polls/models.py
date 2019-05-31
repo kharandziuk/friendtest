@@ -22,8 +22,13 @@ class Poll(models.Model):
         return reverse('participate', args=(self.pk,))
 
     def get_comparison_score(self):
-        score = int(self.answer == self.reference_poll.answer)
-        return int(score / 1. * 100)
+        # example of assertion. If the app doesn't hold this property then we lost data integrity and everything fucked up
+        assert self.answers.count()  == self.reference_poll.answers.count()
+        score = sum(
+            1 for l, r in zip(self.answers.all(), self.reference_poll.answers.all())
+            if l.value == r.value
+        )
+        return int(float(score) / self.answers.count() * 100)
 
 class Answer(models.Model):
     value = models.CharField(max_length=1, choices=POSSIBLE_ANSWERS)

@@ -1,20 +1,44 @@
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import DetailView
-from . import models
+from . import models, forms
 
 class PollCreate(CreateView):
-    model = models.Poll
-    fields = ['name', 'answer']
+    form_class = forms.PollForm
+    # fields = ['name', 'answer']
     template_name = 'poll/create.html'
+
+    def form_valid(self, form):
+        ctx = self.get_context_data()
+        inlines = ctx['inlines']
+        if inlines.is_valid() and form.is_valid():
+            self.object = form.save() # saves Father and Children
+            return redirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
         return self.object.get_share_url()
 
 
+    def get_context_data(self, **kwargs):
+        ctx = super(PollCreate, self).get_context_data(**kwargs)
+        if self.request.POST:
+            ctx['form'] = forms.PollForm(self.request.POST)
+            ctx['inlines'] = forms.AnswerInlineForm(self.request.POST, prefix='questions')
+        else:
+            ctx['form'] = forms.PollForm()
+            ctx['inlines'] = forms.AnswerInlineForm()
+        return ctx
+
+
 class PollShare(DetailView):
     model = models.Poll
     template_name = 'poll/share.html'
+
 
 class PollParticipate(CreateView):
     model = models.Poll
@@ -31,6 +55,7 @@ class PollParticipate(CreateView):
 
     def get_success_url(self):
         return self.object.get_compare_url()
+
 
 class PollCompare(DetailView):
     model = models.Poll

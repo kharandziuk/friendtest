@@ -5,12 +5,15 @@ from .. import factories, models
 
 pytestmark = pytest.mark.django_db
 
+@pytest.mark.only
 def test_can_create_an_empty_poll_and_see_share_url(django_app):
     assert models.Poll.objects.count() == 0
     resp = django_app.get('/')
     form = resp.form
+    print(form.fields.items())
     form['name'] = 'Max'
-    form['answer'] = 'Y'
+    form['value'] = 'Y'
+    resp.showbrowser()
     response = form.submit().follow()
     assert models.Poll.objects.count() == 1
 

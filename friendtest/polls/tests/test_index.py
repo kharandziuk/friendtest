@@ -46,7 +46,6 @@ def test_can_compate_a_poll_100(django_app):
     form = response.form
     form['name'] = 'Vova'
     form['answers-0-value'] = 'Y'
-    response.showbrowser()
     response = form.submit()
 
     assert response.status_code == 302

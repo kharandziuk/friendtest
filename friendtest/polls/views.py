@@ -17,7 +17,7 @@ class PollCreate(CreateView):
             inlines.save()
             return redirect(self.get_success_url())
         else:
-            return super.form_invalid(form)
+            return super().form_invalid(form)
 
     def get_success_url(self):
         return self.object.get_share_url()
@@ -41,7 +41,7 @@ class PollParticipate(PollCreate):
 
     def form_valid(self, form):
         redirection = super().form_valid(form)
-        if self.object.pk:
+        if self.object and self.object.pk:
             self.object.reference_poll_id = self.kwargs['reference_poll_pk']
             self.object.save()
         return redirection

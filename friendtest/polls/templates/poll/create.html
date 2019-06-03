@@ -3,8 +3,8 @@
 {{ form.errors }}
 {{ form.as_table }}
 <h2>Questions:</h2>
-{{ inline.errors }}
-{{ inlines.as_table }}
+{{ inlines.non_form_errors }}
+{{ inlines.as_p }}
 {{ inlines.management_form }}
 
 <input type="submit" class="btn btn-primary" value="Submit">

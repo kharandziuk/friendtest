@@ -30,7 +30,15 @@ class Poll(models.Model):
         )
         return int(float(score) / self.answers.count() * 100)
 
+
+class Question(models.Model):
+    value = models.CharField(max_length=255)
+
+    def get_random_questions(self):
+        return models.Question.objects.order_by('?')[:settings.QUESTIONS_NUMBER]
+
+
 class Answer(models.Model):
+    question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
     value = models.CharField(max_length=1, choices=POSSIBLE_ANSWERS)
     poll = models.ForeignKey(Poll, related_name='answers', on_delete=models.CASCADE)
-    question = 'Do you like green color?'

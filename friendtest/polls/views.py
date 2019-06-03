@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import DetailView
+from django.conf import settings
 from . import models, forms
+import ipdb
 
 class PollCreate(CreateView):
     form_class = forms.PollForm
     # fields = ['name', 'answer']
     template_name = 'poll/create.html'
+
 
     def form_valid(self, form):
         ctx = self.get_context_data()
@@ -29,15 +32,25 @@ class PollCreate(CreateView):
             ctx['form'] = forms.PollForm(self.request.POST)
             ctx['inlines'] = forms.AnswerInlineFormset(self.request.POST)
         else:
-            ctx['form'] = forms.PollForm()
-            ctx['inlines'] = forms.AnswerInlineFormset()
+            ctx['form'] = forms.PollForm(**self.get_form_kwargs())
+            ctx['inlines'] = forms.AnswerInlineFormset(initial=self.get_inlines_initial())
         return ctx
+
+    def get_inlines_initial(self):
+        random_questions = models.Question.objects.order_by('?')[
+                :settings.QUESTIONS_NUMBER]
+        initial =  [
+            {'question': q} for q in random_questions
+        ]
+        return initial
 
 
 class PollParticipate(PollCreate):
 
     def get_success_url(self):
         return self.object.get_compare_url()
+
+
 
     def form_valid(self, form):
         redirection = super().form_valid(form)
